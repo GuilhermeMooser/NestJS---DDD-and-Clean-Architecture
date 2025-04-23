@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { ClassValidatorFields } from '../../class-validator-fields';
 import * as libClassValidator from 'class-validator';
 
@@ -8,7 +5,7 @@ class StubClassValidatorFields extends ClassValidatorFields<{
   field: string;
 }> {}
 
-describe('ClassValidatorFields unit testes', () => {
+describe('ClassValidatorFields unit tests', () => {
   it('Should initialize erros and validatedDate variable with null', () => {
     const sut = new StubClassValidatorFields();
 
@@ -31,5 +28,17 @@ describe('ClassValidatorFields unit testes', () => {
     expect(spyValidateSync).toHaveBeenCalled();
     expect(sut.validatedData).toBeNull();
     expect(sut.errors).toStrictEqual({ field: ['test error'] });
+  });
+
+  it('Should validate without errors', () => {
+    const spyValidateSync = jest.spyOn(libClassValidator, 'validateSync');
+    spyValidateSync.mockReturnValue([]);
+
+    const sut = new StubClassValidatorFields();
+
+    expect(sut.validate({ field: 'value' })).toBeTruthy();
+    expect(spyValidateSync).toHaveBeenCalled();
+    expect(sut.validatedData).toStrictEqual({ field: 'value' });
+    expect(sut.errors).toBeNull();
   });
 });
