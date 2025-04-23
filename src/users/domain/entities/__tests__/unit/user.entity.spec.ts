@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/unbound-method */
 import { UserEntity, UserProps } from '../../user.entity';
 import { UserDataBuilder } from '@/users/domain/testing/helping/user-data-builder';
 
@@ -6,12 +7,14 @@ describe('UserEntity unit tests', () => {
   let sut: UserEntity;
 
   beforeEach(() => {
+    UserEntity.validate = jest.fn();
     props = UserDataBuilder({});
 
     sut = new UserEntity(props);
   });
 
   it('Constructor method', () => {
+    expect(UserEntity.validate).toHaveBeenCalled();
     expect(sut.props.name).toEqual(props.name);
     expect(sut.props.email).toEqual(props.email);
     expect(sut.props.password).toEqual(props.password);
@@ -55,11 +58,13 @@ describe('UserEntity unit tests', () => {
 
   it('Should update a user', () => {
     sut.update('other name');
+    expect(UserEntity.validate).toHaveBeenCalled();
     expect(sut.props.name).toEqual('other name');
   });
 
   it('Should update the password field', () => {
     sut.updatePassword('other password');
+    expect(UserEntity.validate).toHaveBeenCalled();
     expect(sut.props.password).toEqual('other password');
   });
 });
