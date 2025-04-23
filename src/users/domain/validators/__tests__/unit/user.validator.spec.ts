@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { UserDataBuilder } from '@/users/domain/testing/helping/user-data-builder';
 import {
@@ -5,12 +6,15 @@ import {
   UserValidator,
   UserValidatorFactory,
 } from '../../user.validators';
+import { UserProps } from '@/users/domain/entities/user.entity';
 
 let sut: UserValidator;
+let props: UserProps;
 
 describe('UserValidator unit tests', () => {
   beforeEach(() => {
     sut = UserValidatorFactory.create();
+    props = UserDataBuilder({});
   });
 
   it('Valid case for user validator class', () => {
@@ -138,6 +142,22 @@ describe('UserValidator unit tests', () => {
       expect(isValid).toBeFalsy();
       expect(sut.errors['password']).toStrictEqual([
         'password must be shorter than or equal to 100 characters',
+      ]);
+    });
+  });
+
+  describe('CreatedAt field', () => {
+    it('Invalidation cases for createdAt field', () => {
+      let isValid = sut.validate({ ...props, createdAt: 10 as any });
+      expect(isValid).toBeFalsy();
+      expect(sut.errors['createdAt']).toStrictEqual([
+        'createdAt must be a Date instance',
+      ]);
+
+      isValid = sut.validate({ ...props, createdAt: '2023' as any });
+      expect(isValid).toBeFalsy();
+      expect(sut.errors['createdAt']).toStrictEqual([
+        'createdAt must be a Date instance',
       ]);
     });
   });
