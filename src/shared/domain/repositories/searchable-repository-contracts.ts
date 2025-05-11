@@ -74,7 +74,7 @@ export class SearchParams {
       return;
     }
 
-    const dir = `${value.toLowerCase()}`;
+    const dir = `${value}`.toLowerCase();
     this._sortDir = dir !== 'asc' && dir !== 'desc' ? 'desc' : dir;
   }
 
