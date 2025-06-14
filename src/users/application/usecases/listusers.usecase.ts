@@ -1,21 +1,33 @@
 import { UserRepository } from '@/users/domain/repositories/user.repository';
-import { UserOutput } from '../dtos/user-output';
 import { UseCase as DefaultUseCase } from '@/shared/application/usecases/use-case';
+import { SearchInput } from '@/shared/application/dtos/search-input';
+import { UserOutput, UserOutputMapper } from '../dtos/user-output';
+import {
+  PaginationOutput,
+  PaginationOutputMapper,
+} from '@/shared/application/dtos/pagination-output';
 
 /* eslint-disable @typescript-eslint/no-namespace */
-export namespace GetUserUseCase {
-  export type Input = {
-    id: string;
-  };
+export namespace ListUsersUseCase {
+  export type Input = SearchInput;
 
-  export type Output = UserOutput;
+  export type Output = PaginationOutput<UserOutput>;
 
   export class UseCase implements DefaultUseCase<Input, Output> {
     constructor(private readonly userRepository: UserRepository.Repository) {}
 
     async execute(input: Input): Promise<Output> {
-      const entity = await this.userRepository.findById(input.id);
-      return entity.toJSON();
+      const params = new UserRepository.SearchParams(input);
+
+      const searchResult = await this.userRepository.search(params);
+      return this.toOutput(searchResult);
+    }
+
+    private toOutput(searchResult: UserRepository.SearchResult): Output {
+      const items = searchResult.items.map(item => {
+        return UserOutputMapper.toOutput(item);
+      });
+      return PaginationOutputMapper.toOutput(items, searchResult);
     }
   }
 }
