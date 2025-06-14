@@ -2,7 +2,7 @@ import { UserInMemoryRepository } from '@/users/infrastructure/database/in-memor
 import { NotFoundError } from '@/shared/domain/errors/not-found-error';
 import { UserDataBuilder } from '@/users/domain/testing/helping/user-data-builder';
 import { UserEntity } from '@/users/domain/entities/user.entity';
-import { UpdateUserUseCase } from '../../updateuser.usecase';
+import { UpdateUserUseCase } from '../../update-user.usecase';
 import { BadRequestError } from '@/shared/application/errors/bad-request-error';
 
 describe('UpdateUserUseCase unit tests', () => {
