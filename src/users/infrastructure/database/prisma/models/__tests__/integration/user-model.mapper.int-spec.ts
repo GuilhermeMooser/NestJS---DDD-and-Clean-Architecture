@@ -6,7 +6,6 @@ import {
   PrismaClient,
   User,
 } from '@/shared/infrastructure/database/generated/prisma';
-import { execSync } from 'node:child_process';
 import { UserModelMapper } from '../../user-model.mapper';
 import { ValidationError } from '@/shared/domain/errors/validation-error';
 import { UserEntity } from '@/users/domain/entities/user.entity';
