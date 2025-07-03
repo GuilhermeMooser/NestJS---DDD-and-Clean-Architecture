@@ -54,7 +54,7 @@ export class UserPrismaRepository implements UserRepository.Repository {
 
       return UserModelMapper.toEntity(user);
     } catch {
-      throw new NotFoundError(`UserModal not found using ID ${id}`);
+      throw new NotFoundError(`UserModel not found using ID ${id}`);
     }
   }
 }
