@@ -56,7 +56,7 @@ export class UserPrismaRepository implements UserRepository.Repository {
     });
 
     return new UserRepository.SearchResult({
-      items: models.map(model => UserModelMapper.toEntity(model)),
+      items: (await models).map(model => UserModelMapper.toEntity(model)),
       total: count,
       currentPage: props.page,
       perPage: props.perPage,

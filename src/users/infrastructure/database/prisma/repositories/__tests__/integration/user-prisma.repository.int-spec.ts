@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
@@ -7,15 +8,14 @@ import {
   PrismaClient,
   User,
 } from '@/shared/infrastructure/database/generated/prisma';
-import { ValidationError } from '@/shared/domain/errors/validation-error';
 import { UserEntity } from '@/users/domain/entities/user.entity';
 import { setupPrismaTests } from '@/shared/infrastructure/database/prisma/testing/setup-prisma-tests';
-import { UserModelMapper } from '../../../models/user-model.mapper';
 import { UserPrismaRepository } from '../../user-prisma.repository';
 import { Test, TestingModule } from '@nestjs/testing';
 import { DatabaseModule } from '@/shared/infrastructure/database/database.module';
 import { NotFoundError } from '@/shared/domain/errors/not-found-error';
 import { UserDataBuilder } from '@/users/domain/testing/helping/user-data-builder';
+import { UserRepository } from '@/users/domain/repositories/user.repository';
 
 describe('UserPrismaRepository Integration Tests', () => {
   const prismaService = new PrismaClient();
@@ -71,5 +71,37 @@ describe('UserPrismaRepository Integration Tests', () => {
     const entities = await sut.findAll();
     expect(entities).toHaveLength(1);
     entities.map(item => expect(item.toJSON()).toStrictEqual(entity.toJSON()));
+  });
+
+  describe('search method tests', () => {
+    it('Should apply only pagination when the other params are null', async () => {
+      const createdAt = new Date();
+      const entities: UserEntity[] = [];
+
+      const arrange = Array(16).fill(UserDataBuilder({}));
+
+      arrange.forEach((element, index) => {
+        entities.push(
+          new UserEntity({
+            ...element,
+            name: `User${index}}`,
+            email: `test${index}@mail.com`,
+            createdAt: new Date(createdAt.getTime() + index),
+          }),
+        );
+      });
+
+      await prismaService.user.createMany({
+        data: entities.map(item => item.toJSON()),
+      });
+
+      const searchOutput = await sut.search(new UserRepository.SearchParams());
+
+      expect(searchOutput).toBeInstanceOf(UserRepository.SearchResult);
+      expect(searchOutput.total).toBe(16);
+      searchOutput.items.forEach(item => {
+        expect(item).toBeInstanceOf(UserEntity);
+      });
+    });
   });
 });
