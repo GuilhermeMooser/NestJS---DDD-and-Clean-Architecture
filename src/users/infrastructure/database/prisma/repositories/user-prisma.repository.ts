@@ -43,8 +43,10 @@ export class UserPrismaRepository implements UserRepository.Repository {
     const models = await this.prismaService.user.findMany({
       ...(props.filter && {
         where: {
-          contains: props.filter,
-          mode: 'insensitive',
+          name: {
+            contains: props.filter,
+            mode: 'insensitive',
+          },
         },
       }),
       orderBy: {
