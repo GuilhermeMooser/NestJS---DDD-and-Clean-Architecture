@@ -8,20 +8,20 @@ import {
   PrismaClient,
   User,
 } from '@/shared/infrastructure/database/generated/prisma';
+import { UserEntity } from '@/users/domain/entities/user.entity';
 import { setupPrismaTests } from '@/shared/infrastructure/database/prisma/testing/setup-prisma-tests';
 import { Test, TestingModule } from '@nestjs/testing';
 import { DatabaseModule } from '@/shared/infrastructure/database/database.module';
-import { SignupUseCase } from '@/users/application/usecases/sign-up.usecase';
-import { HashProvider } from '@/shared/application/providers/hash-provider';
-import { BCryptjsHashProvider } from '@/users/infrastructure/providers/hash-provider/bcryptjs-hash.provider';
+import { NotFoundError } from '@/shared/domain/errors/not-found-error';
+import { UserDataBuilder } from '@/users/domain/testing/helping/user-data-builder';
 import { UserPrismaRepository } from '@/users/infrastructure/database/prisma/repositories/user-prisma.repository';
+import { ListUsersUseCase } from '../../../list-users.usecase';
 
-describe('SignupUseCase Integration Tests', () => {
+describe('ListUsersUseCase Integration Tests', () => {
   const prismaService = new PrismaClient();
-  let sut: SignupUseCase.UseCase;
+  let sut: ListUsersUseCase.UseCase;
   let repository: UserPrismaRepository;
   let module: TestingModule;
-  let hashProvider: HashProvider;
 
   beforeAll(async () => {
     setupPrismaTests();
@@ -29,11 +29,10 @@ describe('SignupUseCase Integration Tests', () => {
       imports: [DatabaseModule.forTest(prismaService)],
     }).compile();
     repository = new UserPrismaRepository(prismaService as any);
-    hashProvider = new BCryptjsHashProvider();
   }, 20000);
 
   beforeEach(async () => {
-    sut = new SignupUseCase.UseCase(repository, hashProvider);
+    sut = new ListUsersUseCase.UseCase(repository);
     await prismaService.user.deleteMany();
   });
 
@@ -41,15 +40,33 @@ describe('SignupUseCase Integration Tests', () => {
     await module.close();
   });
 
-  it('Should create a user', async () => {
-    const props = {
-      name: 'test name',
-      email: 'a@a.com',
-      password: 'TestPassword123',
-    };
+  it('Should returns the users ordered by createdAt', async () => {
+    const createdAt = new Date();
+    const entities: UserEntity[] = [];
+    const arrange = Array(3).fill(UserDataBuilder({}));
 
-    const output = await sut.execute(props);
-    expect(output.id).toBeDefined();
-    expect(output.createdAt).toBeInstanceOf(Date);
+    arrange.forEach((element, index) => {
+      entities.push(
+        new UserEntity({
+          ...element,
+          email: `test${index}@mail.com`,
+          createdAt: new Date(createdAt.getTime() + index),
+        }),
+      );
+    });
+
+    await prismaService.user.createMany({
+      data: entities.map(item => item.toJSON()),
+    });
+
+    const output = await sut.execute({});
+
+    expect(output).toStrictEqual({
+      items: entities.reverse().map(item => item.toJSON()),
+      total: 3,
+      currentPage: 1,
+      perPage: 15,
+      lastPage: 1,
+    });
   });
 });
