@@ -15,11 +15,11 @@ import { DatabaseModule } from '@/shared/infrastructure/database/database.module
 import { NotFoundError } from '@/shared/domain/errors/not-found-error';
 import { UserDataBuilder } from '@/users/domain/testing/helping/user-data-builder';
 import { UserPrismaRepository } from '@/users/infrastructure/database/prisma/repositories/user-prisma.repository';
-import { DeleteUserUseCase } from '../../../delete-user.usecase';
+import { GetUserUseCase } from '../../../get-user.usecase ';
 
-describe('DeleteUserUseCase Integration Tests', () => {
+describe('GetUserUseCase Integration Tests', () => {
   const prismaService = new PrismaClient();
-  let sut: DeleteUserUseCase.UseCase;
+  let sut: GetUserUseCase.UseCase;
   let repository: UserPrismaRepository;
   let module: TestingModule;
 
@@ -32,7 +32,7 @@ describe('DeleteUserUseCase Integration Tests', () => {
   }, 20000);
 
   beforeEach(async () => {
-    sut = new DeleteUserUseCase.UseCase(repository);
+    sut = new GetUserUseCase.UseCase(repository);
     await prismaService.user.deleteMany();
   });
 
@@ -46,21 +46,14 @@ describe('DeleteUserUseCase Integration Tests', () => {
     );
   });
 
-  it('Should delete an user', async () => {
+  it('Should returns an user', async () => {
     const entity = new UserEntity(UserDataBuilder({}));
-    const newUser = await prismaService.user.create({
+    const model = await prismaService.user.create({
       data: entity.toJSON(),
     });
 
-    await sut.execute({ id: entity._id });
+    const output = await sut.execute({ id: entity._id });
 
-    const output = await prismaService.user.findUnique({
-      where: {
-        id: entity._id,
-      },
-    });
-    expect(output).toBeNull();
-    const models = await prismaService.user.findMany();
-    expect(models).toHaveLength(0);
+    expect(output).toMatchObject(model);
   });
 });
