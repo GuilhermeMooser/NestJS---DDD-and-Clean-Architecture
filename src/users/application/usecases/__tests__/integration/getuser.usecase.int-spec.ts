@@ -15,7 +15,7 @@ import { DatabaseModule } from '@/shared/infrastructure/database/database.module
 import { NotFoundError } from '@/shared/domain/errors/not-found-error';
 import { UserDataBuilder } from '@/users/domain/testing/helping/user-data-builder';
 import { UserPrismaRepository } from '@/users/infrastructure/database/prisma/repositories/user-prisma.repository';
-import { GetUserUseCase } from '../../../get-user.usecase ';
+import { GetUserUseCase } from '../../get-user.usecase ';
 
 describe('GetUserUseCase Integration Tests', () => {
   const prismaService = new PrismaClient();
