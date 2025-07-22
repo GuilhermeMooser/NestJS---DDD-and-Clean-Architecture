@@ -14,7 +14,9 @@ describe('UsersPresenter unit tests', () => {
     password: 'fake',
     createdAt: createdAt,
   };
+
   let sut: UserPresenter;
+
   beforeEach(() => {
     sut = new UserPresenter(props);
   });
