@@ -4,7 +4,7 @@ import { PaginationPresenter } from '../../pagination.presenter';
 import { instanceToPlain } from 'class-transformer';
 
 class StubCollectionPresenter extends CollectionPresenter {
-  data: [1, 2, 3];
+  data = [1, 2, 3];
 }
 
 describe('CollectionPresenter unit tests', () => {
