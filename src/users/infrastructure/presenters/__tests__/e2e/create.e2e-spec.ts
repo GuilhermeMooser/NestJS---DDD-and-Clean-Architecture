@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
+import { applyGlobalConfig } from '@/global-config';
 import { DatabaseModule } from '@/shared/infrastructure/database/database.module';
 import { setupPrismaTests } from '@/shared/infrastructure/database/prisma/testing/setup-prisma-tests';
 import { EnvConfigModule } from '@/shared/infrastructure/env-config/env-config.module';
@@ -33,6 +34,7 @@ describe('UsersController unit tests', () => {
     }).compile();
 
     app = module.createNestApplication();
+    applyGlobalConfig(app);
     await app.init();
     repository = module.get<UserRepository.Repository>('UserRepository');
   });
