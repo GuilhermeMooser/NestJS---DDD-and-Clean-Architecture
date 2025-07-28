@@ -6,7 +6,9 @@ import { applyGlobalConfig } from '@/global-config';
 import { DatabaseModule } from '@/shared/infrastructure/database/database.module';
 import { setupPrismaTests } from '@/shared/infrastructure/database/prisma/testing/setup-prisma-tests';
 import { EnvConfigModule } from '@/shared/infrastructure/env-config/env-config.module';
+import { UserEntity } from '@/users/domain/entities/user.entity';
 import { UserRepository } from '@/users/domain/repositories/user.repository';
+import { UserDataBuilder } from '@/users/domain/testing/helping/user-data-builder';
 import { SignupDto } from '@/users/infrastructure/dtos/sign-up.dto';
 import { UsersController } from '@/users/infrastructure/users.controller';
 import { UsersModule } from '@/users/infrastructure/users.module';
@@ -130,6 +132,19 @@ describe('UsersController unit tests', () => {
         .post('/users')
         .send(Object.assign(signUpDto, { xpto: 'fake' }))
         .expect(422);
+
+      expect(res.body.error).toBe('Unprocessable Entity');
+      expect(res.body.message).toEqual(['property xpt should not exists']);
+    });
+
+    it('should return a error with 409 code when the email is duplicated', async () => {
+      const entity = new UserEntity(UserDataBuilder({ ...signUpDto }));
+      await repository.insert(entity);
+
+      const res = await request(app.getHttpServer())
+        .post('/users')
+        .send(signUpDto)
+        .expect(409);
 
       expect(res.body.error).toBe('Unprocessable Entity');
       expect(res.body.message).toEqual(['property xpt should not exists']);
