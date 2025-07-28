@@ -144,10 +144,12 @@ describe('UsersController unit tests', () => {
       const res = await request(app.getHttpServer())
         .post('/users')
         .send(signUpDto)
-        .expect(409);
-
-      expect(res.body.error).toBe('Unprocessable Entity');
-      expect(res.body.message).toEqual(['property xpt should not exists']);
+        .expect(409)
+        .expect({
+          statusCode: 409,
+          error: 'Conflict',
+          message: 'Email address already used',
+        });
     });
   });
 });
