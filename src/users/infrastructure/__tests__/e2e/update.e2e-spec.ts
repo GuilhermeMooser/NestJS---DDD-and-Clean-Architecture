@@ -55,7 +55,7 @@ describe('UsersController e2e tests', () => {
     it('should update an user', async () => {
       updateUserDto.name = 'test name';
       const res = await request(app.getHttpServer())
-        .put('/users/${entity._id}')
+        .put(`/users/${entity._id}`)
         .send(updateUserDto)
         .expect(200);
 
@@ -67,7 +67,7 @@ describe('UsersController e2e tests', () => {
 
     it('should return a error with 422 code when request body is invalid', async () => {
       const res = await request(app.getHttpServer())
-        .put('/users/${entity._id}')
+        .put(`/users/${entity._id}`)
         .send({})
         .expect(422);
 
