@@ -18,7 +18,7 @@ import { PrismaClient } from '@prisma/client';
 import { instanceToPlain } from 'class-transformer';
 import request from 'supertest';
 
-describe('UsersController unit tests', () => {
+describe('UsersController e2e tests', () => {
   let app: INestApplication;
   let module: TestingModule;
   let repository: UserRepository.Repository;
