@@ -3,7 +3,7 @@ import { BadRequestError } from '../../../shared/application/errors/bad-request-
 import { HashProvider } from '@/shared/application/providers/hash-provider';
 import { UserOutput, UserOutputMapper } from '../dtos/user-output';
 import { UseCase as DefaultUseCase } from '@/shared/application/usecases/use-case';
-import { InvalidCrendialsError } from '@/shared/application/errors/invalid-credentials-error';
+import { InvalidCredentialsError } from '@/shared/application/errors/invalid-credentials-error';
 
 /* eslint-disable @typescript-eslint/no-namespace */
 export namespace SigninUseCase {
@@ -35,7 +35,7 @@ export namespace SigninUseCase {
       );
 
       if (!hashPasswordMatches) {
-        throw new InvalidCrendialsError('Invalid credentials');
+        throw new InvalidCredentialsError('Invalid credentials');
       }
 
       return UserOutputMapper.toOutput(entity);

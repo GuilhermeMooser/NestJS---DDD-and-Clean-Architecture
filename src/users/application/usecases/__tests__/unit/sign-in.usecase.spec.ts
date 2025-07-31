@@ -6,7 +6,7 @@ import { SigninUseCase } from '../../sign-in.usecase';
 import { UserEntity } from '@/users/domain/entities/user.entity';
 import { BadRequestError } from '@/shared/application/errors/bad-request-error';
 import { NotFoundError } from '@/shared/domain/errors/not-found-error';
-import { InvalidCrendialsError } from '@/shared/application/errors/invalid-credentials-error';
+import { InvalidCredentialsError } from '@/shared/application/errors/invalid-credentials-error';
 
 describe('SigninUseCase unit tests', () => {
   let sut: SigninUseCase.UseCase;
@@ -69,7 +69,7 @@ describe('SigninUseCase unit tests', () => {
 
     const props = { email: 'a@a.com', password: 'fake password' };
     await expect(() => sut.execute(props)).rejects.toBeInstanceOf(
-      InvalidCrendialsError,
+      InvalidCredentialsError,
     );
   });
 });

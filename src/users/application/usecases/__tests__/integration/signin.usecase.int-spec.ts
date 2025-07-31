@@ -18,7 +18,7 @@ import { UserEntity } from '@/users/domain/entities/user.entity';
 import { UserDataBuilder } from '@/users/domain/testing/helping/user-data-builder';
 import { NotFoundError } from '@/shared/domain/errors/not-found-error';
 import { SigninUseCase } from '../../sign-in.usecase';
-import { InvalidCrendialsError } from '@/shared/application/errors/invalid-credentials-error';
+import { InvalidCredentialsError } from '@/shared/application/errors/invalid-credentials-error';
 import { BadRequestError } from '@/shared/application/errors/bad-request-error';
 
 describe('SigninUseCase Integration Tests', () => {
@@ -73,7 +73,7 @@ describe('SigninUseCase Integration Tests', () => {
         email: 'a@a.com',
         password: 'fake',
       }),
-    ).rejects.toBeInstanceOf(InvalidCrendialsError);
+    ).rejects.toBeInstanceOf(InvalidCredentialsError);
   });
 
   it('Should throws error when email not provided', async () => {
