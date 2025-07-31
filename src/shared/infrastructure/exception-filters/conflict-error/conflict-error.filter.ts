@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { ConflictError } from '@/shared/domain/errors/conflict-error';
 import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
 import { FastifyReply } from 'fastify';
