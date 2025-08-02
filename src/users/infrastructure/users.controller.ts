@@ -203,6 +203,19 @@ export class UsersController {
     return UsersController.userToResponse(output);
   }
 
+  @ApiBearerAuth()
+  @ApiResponse({
+    status: 422,
+    description: 'Corpo da requisição com dados inválidos',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'ID não encontrado',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Acesso não autorizado',
+  })
   @UseGuards(AuthGuard)
   @Patch(':id')
   async updatePassword(
@@ -216,6 +229,19 @@ export class UsersController {
     return UsersController.userToResponse(output);
   }
 
+  @ApiBearerAuth()
+  @ApiResponse({
+    status: 204,
+    description: 'Resposta de confirmação da exclusão',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'ID não encontrado',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Acesso não autorizado',
+  })
   @UseGuards(AuthGuard)
   @HttpCode(204)
   @Delete(':id')
